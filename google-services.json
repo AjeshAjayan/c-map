@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "776280276490",
+    "project_id": "c-map-poc",
+    "storage_bucket": "c-map-poc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776280276490:android:3ee40a047c2cca9a06a9f3",
+        "android_client_info": {
+          "package_name": "com.example.map_poc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "776280276490-irdk7ml7vns8l83gq89no9bh288hrtqd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD28L8isfCgjPIIjt2m5fhVgu5-1_V_TU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "776280276490-irdk7ml7vns8l83gq89no9bh288hrtqd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
