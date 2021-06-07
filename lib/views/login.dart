@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:map_poc/views/home.dart';
+import 'package:map_poc/views/infrasturcture_list.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView();
@@ -51,7 +52,7 @@ class _LoginViewState extends State<LoginView> {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => HomeView()),);
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => InfrastructureList()),);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

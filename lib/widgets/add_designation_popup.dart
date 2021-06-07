@@ -49,6 +49,7 @@ designationPopup(
                   new Designation(x: user.dx, y: user.dy, label: label));
 
               InfrastructurePaths path = new InfrastructurePaths(
+                infId: 0,
                   startX: from.dx,
                   startY: from.dy,
                   endX: user.dx,

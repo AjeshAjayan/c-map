@@ -9,7 +9,9 @@ import 'package:map_poc/widgets/add_designation_popup.dart';
 import 'package:map_poc/widgets/add_intersection_popup.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView();
+  final int infrastructureId;
+
+  const HomeView(this.infrastructureId);
 
   @override
   _HomeViewState createState() => _HomeViewState();
@@ -33,12 +35,27 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   initState() {
-    // this.routes.add(new InfrastructureRoute(0, 0, 0, 150, 'Reception', 'X-Ray'));
-    // this.routes.add(new InfrastructureRoute(0, 150, 150, 150, 'X-Ray', 'Pharmacy'));
-    // this.designations.add(new Designation(0, 0, 'Reception'));
-    // this.designations.add(new Designation(0, 150, 'X-Ray'));
-    // this.designations.add(new Designation(150, 150, 'Pharmacy'));
+    getExistingDestinations();
+    getExistingInfraPaths();
     super.initState();
+  }
+
+  getExistingDestinations() async {
+    final List<Designation> existingDestination =
+        await DesignationService.getDestinationsByInfraId(
+            widget.infrastructureId);
+    setState(() {
+      designations.addAll(existingDestination);
+    });
+  }
+
+  getExistingInfraPaths() async {
+    final List<InfrastructurePaths> existingRoutes =
+        await InfrastructurePathService.getInfraPathById(
+            widget.infrastructureId);
+    setState(() {
+      routes.addAll(existingRoutes);
+    });
   }
 
   _moveForward() {
@@ -91,17 +108,27 @@ class _HomeViewState extends State<HomeView> {
         content: Text('Are you sure to add intersection here'),
         actions: [
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              final designation = await DesignationService.addDesignation(
+                  new Designation(
+                      x: user.dx,
+                      y: user.dy,
+                      label: '',
+                      infId: widget.infrastructureId));
+
+              InfrastructurePaths path = new InfrastructurePaths(
+                  infId: widget.infrastructureId,
+                  startX: from.dx,
+                  startY: from.dy,
+                  endX: user.dx,
+                  endY: user.dy,
+                  startLabel: '',
+                  endLabel: '');
+              final responsePath =
+                  await InfrastructurePathService.addPath(path);
+              designations.add(designation);
               setState(() {
-                InfrastructurePaths path = new InfrastructurePaths(
-                    startX: from.dx,
-                    startY: from.dy,
-                    endX: user.dx,
-                    endY: user.dy,
-                    startLabel: '',
-                    endLabel: '');
-                routes.add(path);
-                designations.add(new Designation(x: user.dx, y: user.dy, label: ''));
+                routes.add(responsePath);
                 from = user;
               });
 
@@ -121,7 +148,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   _onMarkDesignation() async {
-
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -155,9 +181,14 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () async {
               try {
                 final designation = await DesignationService.addDesignation(
-                    new Designation(x: user.dx, y: user.dy, label: label));
+                    new Designation(
+                        x: user.dx,
+                        y: user.dy,
+                        label: label,
+                        infId: widget.infrastructureId));
 
                 InfrastructurePaths path = new InfrastructurePaths(
+                    infId: widget.infrastructureId,
                     startX: from.dx,
                     startY: from.dy,
                     endX: user.dx,
@@ -166,7 +197,7 @@ class _HomeViewState extends State<HomeView> {
                     endLabel: '');
 
                 final responsePath =
-                await InfrastructurePathService.addPath(path);
+                    await InfrastructurePathService.addPath(path);
                 designations.add(designation);
                 routes.add(responsePath);
 
@@ -204,7 +235,8 @@ class _HomeViewState extends State<HomeView> {
             width: constraints.maxWidth,
             height: constraints.maxHeight,
             child: CustomPaint(
-              painter: Painter(user, from, to, routes, createMode, designations),
+              painter:
+                  Painter(user, from, to, routes, createMode, designations),
               child: Container(
                 margin: EdgeInsets.all(5),
                 child: Column(
@@ -271,7 +303,7 @@ class _HomeViewState extends State<HomeView> {
                             : Flexible(
                                 child: ElevatedButton(
                                   onPressed: _onMarkDesignation,
-                                  child: Text('Mark Designation'),
+                                  child: Text('Mark Destination'),
                                 ),
                               ),
                         Switch(
@@ -334,7 +366,8 @@ class Painter extends CustomPainter {
   final List<InfrastructurePaths> routes;
   final List<Designation> designations;
 
-  Painter(this.user, this.from, this.to, this.routes, this.createMode, this.designations);
+  Painter(this.user, this.from, this.to, this.routes, this.createMode,
+      this.designations);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -342,14 +375,13 @@ class Painter extends CustomPainter {
     canvas.scale(1, -1);
 
     // draw all designations and intersections
-    for(var designation in designations) {
+    for (var designation in designations) {
       canvas.drawCircle(
           new Offset(designation.x, designation.y),
           25,
           Paint()
             ..color = designation.label != '' ? Colors.red : Colors.blue
-            ..strokeWidth = designation.label != '' ? 5 : 2
-      );
+            ..strokeWidth = designation.label != '' ? 5 : 2);
 
       final ParagraphBuilder paragraphBuilder = ParagraphBuilder(ParagraphStyle(
         textAlign: TextAlign.justify,
@@ -358,7 +390,8 @@ class Painter extends CustomPainter {
       final Paragraph paragraph = paragraphBuilder.build()
         ..layout(ParagraphConstraints(width: size.width));
 
-      canvas.drawParagraph(paragraph, new Offset(designation.x + 10, designation.y + 10));
+      canvas.drawParagraph(
+          paragraph, new Offset(designation.x + 10, designation.y + 10));
     }
 
     // draw all paths

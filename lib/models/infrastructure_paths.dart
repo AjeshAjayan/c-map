@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 class InfrastructurePaths {
 
   const InfrastructurePaths({
+    this.infId,
     required this.startX,
     required this.startY,
     required this.endX,
@@ -13,6 +14,7 @@ class InfrastructurePaths {
     required this.endLabel,
   });
 
+  final int? infId;
   final double startX;
   final double startY;
   final double endX;
@@ -21,6 +23,7 @@ class InfrastructurePaths {
   final String endLabel;
 
   factory InfrastructurePaths.fromJson(Map<String,dynamic> json) => InfrastructurePaths(
+    infId: json['inf_id'] != null ? json['inf_id'] as int : null,
     startX: json['startX'] as double,
     startY: json['startY'] as double,
     endX: json['endX'] as double,
@@ -30,6 +33,7 @@ class InfrastructurePaths {
   );
   
   Map<String, dynamic> toJson() => {
+    'inf_id': infId,
     'startX': startX,
     'startY': startY,
     'endX': endX,
@@ -39,6 +43,7 @@ class InfrastructurePaths {
   };
 
   InfrastructurePaths clone() => InfrastructurePaths(
+    infId: infId,
     startX: startX,
     startY: startY,
     endX: endX,
@@ -49,6 +54,7 @@ class InfrastructurePaths {
 
 
   InfrastructurePaths copyWith({
+    int? infId,
     double? startX,
     double? startY,
     double? endX,
@@ -56,6 +62,7 @@ class InfrastructurePaths {
     String? startLabel,
     String? endLabel
   }) => InfrastructurePaths(
+    infId: infId ?? this.infId,
     startX: startX ?? this.startX,
     startY: startY ?? this.startY,
     endX: endX ?? this.endX,
@@ -66,8 +73,8 @@ class InfrastructurePaths {
 
   @override
   bool operator ==(Object other) => identical(this, other)
-    || other is InfrastructurePaths && startX == other.startX && startY == other.startY && endX == other.endX && endY == other.endY && startLabel == other.startLabel && endLabel == other.endLabel;
+    || other is InfrastructurePaths && infId == other.infId && startX == other.startX && startY == other.startY && endX == other.endX && endY == other.endY && startLabel == other.startLabel && endLabel == other.endLabel;
 
   @override
-  int get hashCode => startX.hashCode ^ startY.hashCode ^ endX.hashCode ^ endY.hashCode ^ startLabel.hashCode ^ endLabel.hashCode;
+  int get hashCode => infId.hashCode ^ startX.hashCode ^ startY.hashCode ^ endX.hashCode ^ endY.hashCode ^ startLabel.hashCode ^ endLabel.hashCode;
 }
